@@ -136,12 +136,10 @@ public class Manager : MonoBehaviour
 		//If creature not found, switch to free camera mode
 		if (creaturesList.Count == 0)
 		{
-			Debug.Log("Rohit Setting Cam to creaturesList.Count=0!");
 			CameraMode = 0;
 		}
 		else if (!creaturesList[selected] | !creaturesList[selected].activeInHierarchy)
 		{
-			Debug.Log("Rohit Setting Cam to 0!");
 			CameraMode = 0;
 		}
 		else creature = creaturesList[selected].GetComponent<Creature>(); //Get creature script
