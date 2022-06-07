@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using LibGit2Sharp;
 
 public class MultiplayerMenu : MonoBehaviour
 {
@@ -35,6 +36,13 @@ public class MultiplayerMenu : MonoBehaviour
 
 	public bool useTCP = false;
 
+#if UNITY_STANDALONE_LINUX
+	private void LateUpdate()
+	{
+		Console.ConsoleLateUpdate();
+	}
+#endif
+
 	private void Start()
 	{
 		ipAddress.text = "127.0.0.1";
@@ -61,6 +69,24 @@ public class MultiplayerMenu : MonoBehaviour
 			NetWorker.localServerLocated += LocalServerLocated;
 			NetWorker.RefreshLocalUdpListings(ushort.Parse(portNumber.text));
 		}
+		//Application.dataPath.ToNPath();
+
+#if UNITY_STANDALONE_LINUX
+		var consoleUI = new ConsoleTextLinux();
+
+		Console.Init(consoleUI);
+
+		Console.SetOpen(true);
+		Console.Write("Hi Rohit from console!");
+#else
+		Debug.Log("Rohit Cloning repo!");
+		CloneOptions co = new CloneOptions();
+		string gitUser = "rohitmohan7@gmail.com", gitToken = "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";
+		co.CredentialsProvider = (_url, _user, _cred) => new UsernamePasswordCredentials { Username = gitUser, Password = gitToken };
+		//var co = new CloneOptions();
+		//co.CredentialsProvider = (_url, _user, _cred) => new UsernamePasswordCredentials { Username = "rohitmohan7", Password = "Boxer69*fat" };
+		Repository.Clone("https://github.com/rohitmohan7/JurassicWarfareMetadata.git", @"C:\Users\rmohan38\Documents\JurassicWarfare", co);
+#endif
 	}
 
 	private void LocalServerLocated(NetWorker.BroadcastEndpoints endpoint, NetWorker sender)
@@ -136,7 +162,6 @@ public class MultiplayerMenu : MonoBehaviour
 
 	public void Host()
 	{
-		Debug.Log("Hi Rohit!");
 		if (useTCP)
 		{
 			server = new TCPServer(64);
@@ -165,8 +190,15 @@ public class MultiplayerMenu : MonoBehaviour
 
 	private void Update()
 	{
+#if UNITY_STANDALONE_LINUX
+		Console.ConsoleUpdate();
+#endif
+
 		if (Input.GetKeyDown(KeyCode.H))
+		{
+			//Console.ConsoleUpdate();
 			Host();
+		}
 		else if (Input.GetKeyDown(KeyCode.C))
 			Connect();
 		else if (Input.GetKeyDown(KeyCode.L))
